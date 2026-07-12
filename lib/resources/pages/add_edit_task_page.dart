@@ -85,9 +85,9 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBF4), // Soft cream canvas background
       
-      // Custom Neo-brutalist App Bar
+      // Custom Neo-brutalist App Bar — Phase 9.4: Orange background
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFCF9F2),
+        backgroundColor: const Color(0xFF9E3A25), // Terracotta orange
         elevation: 0,
         centerTitle: true,
         leading: Padding(
@@ -96,17 +96,10 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
             onTap: () => Navigator.pop(context),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.black, width: 2),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(1.5, 1.5),
-                    blurRadius: 0,
-                  )
-                ]
+                color: Colors.white24,
+                border: Border.all(color: Colors.white, width: 1.5),
               ),
-              child: const Icon(Icons.arrow_back, color: Colors.black, size: 20),
+              child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
             ),
           ),
         ),
@@ -116,13 +109,13 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
             fontSize: 26,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
           child: Container(
-            color: Colors.black,
+            color: Colors.white24,
             height: 2.0,
           ),
         ),

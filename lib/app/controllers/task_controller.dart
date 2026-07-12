@@ -94,4 +94,23 @@ class TaskController extends NyController {
       await loadTasks();
     }
   }
+
+  Future<void> deleteTask(Task task) async {
+    // Optimistic removal
+    if (task.isCompleted) {
+      completedTasks.remove(task);
+    } else {
+      activeTasks.remove(task);
+    }
+    updateState('dashboard');
+
+    try {
+      await _db.deleteTask(task.id!);
+      // Refresh cache after deletion
+      await cacheTasksLocally([...activeTasks, ...completedTasks]);
+    } catch (e) {
+      // Revert if deletion fails
+      await loadTasks();
+    }
+  }
 }

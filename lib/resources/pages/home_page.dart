@@ -15,6 +15,10 @@ class _HomePageState extends NyPage<HomePage> {
   int _selectedTabIndex = 0; // 0 = KEGIATAN AKTIF, 1 = RIWAYAT
   int _currentBottomNavIndex = 0; // 0 = TASKS, 1 = HISTORY, 2 = PROFILE
 
+  // AnimatedList keys — one for active, one for completed
+  final GlobalKey<AnimatedListState> _activeListKey = GlobalKey<AnimatedListState>();
+  final GlobalKey<AnimatedListState> _completedListKey = GlobalKey<AnimatedListState>();
+
   _HomePageState() {
     stateName = 'dashboard';
   }
@@ -26,6 +30,8 @@ class _HomePageState extends NyPage<HomePage> {
 
   @override
   stateUpdated(data) async {
+    // Phase 9.2: reload tasks on any external state push (e.g., from AddEditTaskPage)
+    await widget.controller.loadTasks();
     setState(() {});
   }
 
@@ -85,6 +91,95 @@ class _HomePageState extends NyPage<HomePage> {
     return Colors.black87;
   }
 
+  // Phase 9.1: Toggle task with AnimatedList slide-out animation
+  Future<void> _toggleTask(Task task) async {
+    final controller = widget.controller;
+    
+    if (!task.isCompleted) {
+      // Moving from active → completed: animate out from active list
+      final index = controller.activeTasks.indexOf(task);
+      if (index >= 0) {
+        final removedTask = controller.activeTasks[index];
+        _activeListKey.currentState?.removeItem(
+          index,
+          (context, animation) => _buildAnimatedTaskCard(removedTask, animation),
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+    } else {
+      // Moving from completed → active: animate out from completed list
+      final index = controller.completedTasks.indexOf(task);
+      if (index >= 0) {
+        final removedTask = controller.completedTasks[index];
+        _completedListKey.currentState?.removeItem(
+          index,
+          (context, animation) => _buildAnimatedTaskCard(removedTask, animation),
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+    }
+
+    // Small delay to let animation play before data changes
+    await Future.delayed(const Duration(milliseconds: 180));
+    await controller.toggleStatus(task);
+  }
+
+  // Phase 9.5: Show delete confirmation dialog
+  Future<void> _confirmDelete(Task task) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFFFFFBF4),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: Colors.black, width: 2),
+        ),
+        title: Text(
+          "HAPUS KEGIATAN",
+          style: GoogleFonts.bebasNeue(fontSize: 22, letterSpacing: 1),
+        ),
+        content: Text(
+          "Yakin ingin menghapus \"${task.title}\"? Tindakan ini tidak dapat dibatalkan.",
+          style: GoogleFonts.montserrat(fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              "BATAL",
+              style: GoogleFonts.montserrat(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 8, bottom: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF9E3A25),
+              border: Border.all(color: Colors.black, width: 2),
+              boxShadow: const [BoxShadow(color: Colors.black, offset: Offset(2, 2))],
+            ),
+            child: TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                "HAPUS",
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await widget.controller.deleteTask(task);
+    }
+  }
+
   @override
   Widget view(BuildContext context) {
     final controller = widget.controller;
@@ -97,15 +192,15 @@ class _HomePageState extends NyPage<HomePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBF4), // Warm cream background
       
-      // Custom App Bar (Neo-brutalist style)
+      // Phase 9.4: Orange AppBar (Neo-brutalist style)
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFCF9F2),
+        backgroundColor: const Color(0xFF9E3A25), // Terracotta orange
         elevation: 0,
         centerTitle: true,
         leading: Builder(
           builder: (context) {
             return IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black, size: 28),
+              icon: const Icon(Icons.menu, color: Colors.white, size: 28),
               onPressed: () => Scaffold.of(context).openDrawer(),
             );
           }
@@ -116,11 +211,11 @@ class _HomePageState extends NyPage<HomePage> {
             fontSize: 26,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         actions: [
-          // Circular Avatar with black border
+          // Circular Avatar with white border
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Center(
@@ -129,8 +224,8 @@ class _HomePageState extends NyPage<HomePage> {
                 height: 38,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF9E3A25),
-                  border: Border.all(color: Colors.black, width: 2),
+                  color: const Color(0xFF7A2D1C),
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
                 child: Center(
                   child: Text(
@@ -149,7 +244,7 @@ class _HomePageState extends NyPage<HomePage> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
           child: Container(
-            color: Colors.black,
+            color: Colors.white24,
             height: 2.0,
           ),
         ),
@@ -164,7 +259,7 @@ class _HomePageState extends NyPage<HomePage> {
             children: [
               DrawerHeader(
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFCF9F2),
+                  color: Color(0xFF9E3A25),
                   border: Border(bottom: BorderSide(color: Colors.black, width: 2.5)),
                 ),
                 child: Column(
@@ -173,11 +268,11 @@ class _HomePageState extends NyPage<HomePage> {
                   children: [
                     Text(
                       userName,
-                      style: GoogleFonts.bebasNeue(fontSize: 32, letterSpacing: 1.2),
+                      style: GoogleFonts.bebasNeue(fontSize: 32, letterSpacing: 1.2, color: Colors.white),
                     ),
                     Text(
                       currentUser?.email ?? "anonymous@taskify.com",
-                      style: GoogleFonts.montserrat(fontSize: 12, color: Colors.black87),
+                      style: GoogleFonts.montserrat(fontSize: 12, color: Colors.white70),
                     ),
                   ],
                 ),
@@ -207,6 +302,7 @@ class _HomePageState extends NyPage<HomePage> {
               child: RefreshIndicator(
                 onRefresh: () async {
                   await controller.loadTasks();
+                  setState(() {});
                 },
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -272,7 +368,7 @@ class _HomePageState extends NyPage<HomePage> {
               ),
             ),
 
-      // Floating Action Button (Neo-brutalist square)
+      // Phase 9.3: Fixed FAB — Icon directly as child (no Container wrapper)
       floatingActionButton: FloatingActionButton(
         onPressed: () => routeTo('/add-edit-task'),
         backgroundColor: const Color(0xFF9E3A25), // Terracotta
@@ -280,19 +376,8 @@ class _HomePageState extends NyPage<HomePage> {
           side: BorderSide(color: Colors.black, width: 2.5),
           borderRadius: BorderRadius.zero,
         ),
-        elevation: 0,
-        child: Container(
-          decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                offset: Offset(2, 2),
-                blurRadius: 0,
-              )
-            ]
-          ),
-          child: const Icon(Icons.add, color: Colors.white, size: 28),
-        ),
+        elevation: 4,
+        child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
 
       // Custom Bottom Navigation Bar (Neo-brutalist layout)
@@ -339,11 +424,12 @@ class _HomePageState extends NyPage<HomePage> {
       },
       child: Container(
         height: 48,
-        color: isSelected ? const Color(0xFFD95B43) : Colors.white, // Coral select / white
+        color: isSelected ? const Color(0xFFD95B43) : Colors.white,
         alignment: Alignment.center,
         child: Text(
           label,
           style: GoogleFonts.montserrat(
+            // Phase 9.4: Active tab uses white text
             color: isSelected ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 13,
@@ -390,6 +476,7 @@ class _HomePageState extends NyPage<HomePage> {
               ),
               child: Row(
                 children: [
+                  // Phase 9.4: Active bottom nav — white icon + white label
                   Icon(icon, color: Colors.white, size: 20),
                   const SizedBox(width: 6),
                   Text(
@@ -421,9 +508,10 @@ class _HomePageState extends NyPage<HomePage> {
     );
   }
 
-  // Render list of task cards
+  // Phase 9.1: AnimatedList wrapper for task lists
   Widget _buildTasksList(TaskController controller) {
     final tasks = _selectedTabIndex == 0 ? controller.activeTasks : controller.completedTasks;
+    final listKey = _selectedTabIndex == 0 ? _activeListKey : _completedListKey;
 
     if (tasks.isEmpty) {
       return Center(
@@ -457,14 +545,28 @@ class _HomePageState extends NyPage<HomePage> {
       );
     }
 
-    return ListView.builder(
+    return AnimatedList(
+      key: listKey,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
+      initialItemCount: tasks.length,
+      itemBuilder: (context, index, animation) {
+        if (index >= tasks.length) return const SizedBox.shrink();
         final task = tasks[index];
-        return _buildTaskCard(task);
+        return _buildAnimatedTaskCard(task, animation);
       },
+    );
+  }
+
+  // Slide transition wrapper for AnimatedList items
+  Widget _buildAnimatedTaskCard(Task task, Animation<double> animation) {
+    return SizeTransition(
+      sizeFactor: animation,
+      axisAlignment: -1,
+      child: FadeTransition(
+        opacity: animation,
+        child: _buildTaskCard(task),
+      ),
     );
   }
 
@@ -488,102 +590,147 @@ class _HomePageState extends NyPage<HomePage> {
       child: ClipRRect(
         child: Material(
           color: Colors.transparent,
-          child: InkWell(
-            onLongPress: () {
-              // Option to edit on long press
-              routeTo('/add-edit-task', data: task);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  // Neo-brutalist Styled Checkbox
-                  GestureDetector(
-                    onTap: () {
-                      controller.toggleStatus(task);
-                    },
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: task.isCompleted ? const Color(0xFFD95B43) : Colors.white,
-                        border: Border.all(color: Colors.black, width: 2),
-                      ),
-                      child: task.isCompleted
-                          ? const Icon(Icons.check, size: 18, color: Colors.white)
-                          : null,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                // Neo-brutalist Styled Checkbox
+                GestureDetector(
+                  onTap: () => _toggleTask(task), // Phase 9.1: Animated toggle
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: task.isCompleted ? const Color(0xFFD95B43) : Colors.white,
+                      border: Border.all(color: Colors.black, width: 2),
                     ),
+                    child: task.isCompleted
+                        ? const Icon(Icons.check, size: 18, color: Colors.white)
+                        : null,
                   ),
-                  const SizedBox(width: 14),
+                ),
+                const SizedBox(width: 14),
 
-                  // Task Title and Details
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          task.title,
-                          style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.black,
-                            decoration: task.isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
+                // Task Title and Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task.title,
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.black,
+                          decoration: task.isCompleted
+                              ? TextDecoration.lineThrough
+                              : null,
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            // Category Tag with desaturated background and black border
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: _getCategoryBgColor(task.category),
-                                border: Border.all(color: Colors.black, width: 1.5),
-                              ),
-                              child: Text(
-                                task.category.toUpperCase(),
-                                style: GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10,
-                                  color: _getCategoryTextColor(task.category),
-                                ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          // Category Tag
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: _getCategoryBgColor(task.category),
+                              border: Border.all(color: Colors.black, width: 1.5),
+                            ),
+                            child: Text(
+                              task.category.toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                                color: _getCategoryTextColor(task.category),
                               ),
                             ),
-                            
-                            // Deadline formatted string
-                            if (task.deadline != null) ...[
-                              const SizedBox(width: 10),
-                              const Icon(Icons.calendar_today, size: 13, color: Colors.black87),
-                              const SizedBox(width: 4),
-                              Text(
-                                _formatDeadline(task.deadline),
-                                style: GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 11,
-                                  color: Colors.black54,
-                                ),
+                          ),
+                          
+                          // Deadline formatted string
+                          if (task.deadline != null) ...[
+                            const SizedBox(width: 10),
+                            const Icon(Icons.calendar_today, size: 13, color: Colors.black87),
+                            const SizedBox(width: 4),
+                            Text(
+                              _formatDeadline(task.deadline),
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                                color: Colors.black54,
                               ),
-                            ]
-                          ],
-                        ),
-                      ],
+                            ),
+                          ]
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Flag indicator if task is marked as important
+                if (task.isImportant)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 4.0),
+                    child: Icon(
+                      Icons.flag,
+                      color: Colors.red,
+                      size: 20,
                     ),
                   ),
 
-                  // Flag indicator if task is marked as important
-                  if (task.isImportant)
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Icon(
-                        Icons.flag,
-                        color: Colors.red,
-                        size: 24,
+                // Phase 9.5: Three-dot context menu
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, color: Colors.black54, size: 22),
+                  color: const Color(0xFFFFFBF4),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                    side: BorderSide(color: Colors.black, width: 1.5),
+                  ),
+                  offset: const Offset(0, 36),
+                  onSelected: (value) async {
+                    if (value == 'edit') {
+                      routeTo('/add-edit-task', data: task);
+                    } else if (value == 'delete') {
+                      await _confirmDelete(task);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.edit_outlined, size: 18, color: Colors.black87),
+                          const SizedBox(width: 10),
+                          Text(
+                            "Edit",
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                ],
-              ),
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                          const SizedBox(width: 10),
+                          Text(
+                            "Hapus",
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
