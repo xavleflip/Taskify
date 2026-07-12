@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:nylo_framework/nylo_framework.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AuthRouteGuard extends NyRouteGuard {
-  AuthRouteGuard();
+class GuestRouteGuard extends NyRouteGuard {
+  GuestRouteGuard();
 
   @override
   Future<bool> canOpen(BuildContext? context, NyArgument? data) async {
     final session = Supabase.instance.client.auth.currentSession;
-    return session != null;
+    return session == null;
   }
 
   @override
   redirectTo(BuildContext? context, NyArgument? data) async {
-    await routeTo('/login', navigationType: NavigationType.pushAndForgetAll);
+    await routeTo('/home', navigationType: NavigationType.pushAndForgetAll);
   }
 }

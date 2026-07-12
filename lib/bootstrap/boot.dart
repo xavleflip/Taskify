@@ -5,6 +5,9 @@ import '../resources/widgets/main_widget.dart';
 import '/bootstrap/providers.dart';
 import 'package:nylo_framework/nylo_framework.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'env.g.dart';
+
 /* Boot
 |--------------------------------------------------------------------------
 | The boot class is used to initialize your application.
@@ -37,11 +40,16 @@ class Boot {
 |-------------------------------------------------------------------------- */
 
 Future<void> _init() async {
-  /// Example: Initializing StorageConfig
-  // StorageConfig.init(
-  //   androidOptions: AndroidOptions(
-  //     resetOnError: true,
-  //     encryptedSharedPreferences: false
-  //   )
-  // );
+  // Initialize Supabase Client
+  String? url = Env.get('SUPABASE_URL');
+  String? anonKey = Env.get('SUPABASE_ANON_KEY');
+
+  // Fallbacks if make:env hasn't been run yet
+  url ??= "https://yqwlrgnmgusjdtzaqpqy.supabase.co";
+  anonKey ??= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlxd2xyZ25tZ3VzamR0emFxcHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyNTE1MjcsImV4cCI6MjA5ODgyNzUyN30.fYkLU4T96iz_f5M2oBhHodI9WyTiNLzRSW84UFY63qs";
+
+  await Supabase.initialize(
+    url: url,
+    anonKey: anonKey,
+  );
 }
