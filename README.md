@@ -1,4 +1,4 @@
-# 📑 Taskify - Neo-Brutalist To-Do & Activity Manager
+# 📑 Taskify: To-Do & Activity Manager
 
 **Taskify** is a modern, pixel-perfect task and activity management mobile application built using **Flutter**. Designed around a high-contrast, bold **Neo-Brutalist** aesthetic, Taskify offers a clean and distraction-free user experience to manage, track, and archive daily routines and responsibilities.
 
