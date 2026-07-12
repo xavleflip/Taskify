@@ -58,3 +58,7 @@ lib/bootstrap/env.g.dart
 # Claude related
 CLAUDE.md
 .claude
+
+
+#Build Plan
+docs/
