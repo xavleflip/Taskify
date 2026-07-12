@@ -1,6 +1,8 @@
 import '/app/controllers/home_controller.dart';
 import '/app/controllers/auth_controller.dart';
+import '/app/controllers/task_controller.dart';
 import '/app/models/user.dart';
+import '/app/models/task.dart';
 import '/app/networking/api_service.dart';
 
 /* Model Decoders
@@ -18,6 +20,10 @@ final Map<Type, dynamic> modelDecoders = {
       List.from(data).map((json) => User.fromJson(json)).toList(),
   //
   User: (data) => User.fromJson(data),
+
+  Task: (data) => Task.fromJson(data),
+  List<Task>: (data) =>
+      List.from(data).map((json) => Task.fromJson(json)).toList(),
 };
 
 /* API Decoders
@@ -43,6 +49,7 @@ final Map<Type, dynamic> apiDecoders = {
 final Map<Type, dynamic> controllers = {
   HomeController: () => HomeController(),
   AuthController: () => AuthController(),
+  TaskController: () => TaskController(),
 
   // ...
 };
