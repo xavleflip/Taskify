@@ -39,26 +39,53 @@ class AuthController extends NyController {
         password: password,
       );
       print("[AuthController] Signup response user: ${response.user?.id}, session: ${response.session != null}");
-      if (response.user != null) {
-        if (response.session != null) {
+
+      if (response.user == null) {
+        // This can happen if the email is already in use (Supabase may return a fake user)
+        showToastDanger(
+          title: "Pendaftaran Gagal",
+          description: "Tidak dapat membuat akun. Email mungkin sudah digunakan.",
+        );
+        return false;
+      }
+
+      // If we already have a session (email confirmation is disabled), we're good
+      if (response.session != null) {
+        showToastSuccess(
+          title: "Berhasil",
+          description: "Akun berhasil dibuat! Selamat datang.",
+        );
+        return true;
+      }
+
+      // Email confirmation is enabled — try signing in immediately anyway
+      // (works if Supabase is set to not require confirmation, or if user is pre-confirmed)
+      try {
+        final loginResponse = await _supabase.auth.signInWithPassword(
+          email: email.trim(),
+          password: password,
+        );
+        if (loginResponse.user != null && loginResponse.session != null) {
           showToastSuccess(
-            title: "Success",
-            description: "Pendaftaran berhasil!",
+            title: "Berhasil",
+            description: "Akun berhasil dibuat! Selamat datang.",
           );
           return true;
-        } else {
-          showToastSuccess(
-            title: "Verifikasi Email",
-            description: "Pendaftaran berhasil! Silakan periksa email Anda untuk konfirmasi.",
-          );
-          return false;
         }
+      } catch (_) {
+        // Login after signup failed — email confirmation probably required
       }
+
+      // Fall back: inform user to verify email
+      showToastWarning(
+        title: "Verifikasi Email",
+        description: "Akun dibuat! Silakan cek email Anda untuk konfirmasi, lalu masuk kembali.",
+      );
       return false;
     } on AuthException catch (e) {
       print("[AuthController] Signup AuthException: ${e.message}");
       showToastDanger(
-        title: "Registration Failed",
+        title: "Pendaftaran Gagal",
         description: e.message,
       );
       return false;
