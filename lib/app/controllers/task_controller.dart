@@ -38,6 +38,7 @@ class TaskController extends NyController {
         category: task.category,
         deadline: task.deadline,
         isCompleted: false,
+        isImportant: task.isImportant,
         createdAt: task.createdAt
       ));
     } else {
@@ -50,6 +51,7 @@ class TaskController extends NyController {
         category: task.category,
         deadline: task.deadline,
         isCompleted: true,
+        isImportant: task.isImportant,
         createdAt: task.createdAt
       ));
     }

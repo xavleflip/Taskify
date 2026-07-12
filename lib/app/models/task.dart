@@ -6,6 +6,7 @@ class Task {
   final String category;
   final DateTime? deadline;
   final bool isCompleted;
+  final bool isImportant;
   final DateTime? createdAt;
 
   Task({
@@ -16,6 +17,7 @@ class Task {
     this.category = 'General',
     this.deadline,
     this.isCompleted = false,
+    this.isImportant = false,
     this.createdAt,
   });
 
@@ -29,6 +31,7 @@ class Task {
       category: json['category'] as String? ?? 'General',
       deadline: json['deadline'] != null ? DateTime.parse(json['deadline']) : null,
       isCompleted: json['is_completed'] as bool? ?? false,
+      isImportant: json['is_important'] as bool? ?? false,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
     );
   }
@@ -42,6 +45,7 @@ class Task {
       'category': category,
       'deadline': deadline?.toIso8601String(),
       'is_completed': isCompleted,
+      'is_important': isImportant,
     };
     if (includeId && id != null) {
       data['id'] = id;
