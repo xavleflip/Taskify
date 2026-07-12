@@ -15,12 +15,19 @@ class _HomePageState extends NyPage<HomePage> {
   int _selectedTabIndex = 0; // 0 = KEGIATAN AKTIF, 1 = RIWAYAT
   int _currentBottomNavIndex = 0; // 0 = TASKS, 1 = HISTORY, 2 = PROFILE
 
+  _HomePageState() {
+    stateName = 'dashboard';
+  }
+
   @override
   get init => () async {
-    // Register this page's state with the key 'dashboard' so the controller can update it
-    stateKey = 'dashboard';
     await widget.controller.loadTasks();
   };
+
+  @override
+  stateUpdated(data) async {
+    setState(() {});
+  }
 
   // Helper to format Indonesian date without external dependency issues
   String _getIndonesianDate() {
