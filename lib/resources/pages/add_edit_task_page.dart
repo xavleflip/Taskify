@@ -173,6 +173,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
                         borderSide: const BorderSide(color: Colors.red, width: 2.2),
                         borderRadius: BorderRadius.zero,
                       ),
+                      counterText: '', // Hide the maxLength counter to prevent extra bottom spacing
                     ),
                     style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600),
                     maxLength: 100,
