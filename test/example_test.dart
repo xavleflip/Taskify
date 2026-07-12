@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nylo_framework/nylo_framework.dart';
-import 'package:pantry_pal/bootstrap/providers.dart';
-import 'package:pantry_pal/bootstrap/env.g.dart';
-import 'package:pantry_pal/resources/pages/home_page.dart';
+import 'package:taskify/bootstrap/providers.dart';
+import 'package:taskify/bootstrap/env.g.dart';
+import 'package:taskify/resources/pages/home_page.dart';
 
 /// Example tests demonstrating Nylo's testing framework.
 ///

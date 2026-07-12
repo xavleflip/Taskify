@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nylo_framework/nylo_framework.dart';
-import 'package:pantry_pal/resources/pages/home_page.dart';
-import 'package:pantry_pal/resources/widgets/theme_toggle_widget.dart';
-import 'package:pantry_pal/resources/widgets/logo_widget.dart';
-import 'package:pantry_pal/bootstrap/providers.dart';
-import 'package:pantry_pal/bootstrap/env.g.dart';
+import 'package:taskify/resources/pages/home_page.dart';
+import 'package:taskify/resources/widgets/theme_toggle_widget.dart';
+import 'package:taskify/resources/widgets/logo_widget.dart';
+import 'package:taskify/bootstrap/providers.dart';
+import 'package:taskify/bootstrap/env.g.dart';
 
 void main() {
   // Initialize Nylo testing framework

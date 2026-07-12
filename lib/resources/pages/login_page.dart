@@ -302,9 +302,12 @@ class _LoginPageState extends NyPage<LoginPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.network(
-                                  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png",
+                                  "https://developers.google.com/identity/images/g-logo.png",
                                   height: 20,
                                   width: 20,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.g_mobiledata, color: Colors.blue, size: 24);
+                                  },
                                 ),
                                 const SizedBox(width: 10),
                                 Text(
@@ -366,6 +369,7 @@ class _LoginPageState extends NyPage<LoginPage> {
   }
 
   Future<void> _handleSubmit() async {
+    print("[Login] Submitting form. Form valid: ${_formKey.currentState!.validate()}");
     if (!_formKey.currentState!.validate()) return;
     
     setState(() {
@@ -374,17 +378,24 @@ class _LoginPageState extends NyPage<LoginPage> {
 
     final email = _emailController.text;
     final password = _passwordController.text;
+    bool success = false;
 
+    print("[Login] Calling auth method. Registering: $_isRegistering, Email: $email");
     if (_isRegistering) {
-      await widget.controller.signUpWithEmail(email, password, context);
+      success = await widget.controller.signUpWithEmail(email, password, context);
     } else {
-      await widget.controller.loginWithEmail(email, password, context);
+      success = await widget.controller.loginWithEmail(email, password, context);
     }
 
+    print("[Login] Auth completed. Success: $success, Mounted: $mounted");
     if (mounted) {
       setState(() {
         _isLoading = false;
       });
+      if (success) {
+        print("[Login] Redirecting to /home...");
+        routeTo('/home', navigationType: NavigationType.pushAndForgetAll);
+      }
     }
   }
 
