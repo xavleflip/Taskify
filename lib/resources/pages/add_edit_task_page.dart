@@ -4,6 +4,7 @@ import 'package:nylo_framework/nylo_framework.dart';
 import '/app/models/task.dart';
 import '/app/networking/supabase_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '/app/networking/notification_service.dart';
 
 class AddEditTaskPage extends NyStatefulWidget {
   static RouteView path = ("/add-edit-task", (_) => AddEditTaskPage());
@@ -608,10 +609,16 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
 
     try {
       final service = SupabaseService();
+      late final Task savedTask;
       if (_taskToEdit == null) {
-        await service.createTask(task);
+        savedTask = await service.createTask(task);
       } else {
-        await service.updateTask(task);
+        savedTask = await service.updateTask(task);
+      }
+
+      // Schedule deadline notification reminder (only for active tasks)
+      if (!savedTask.isCompleted && savedTask.deadline != null) {
+        await NotificationService().scheduleDeadlineReminder(savedTask);
       }
 
       // Update dashboard state

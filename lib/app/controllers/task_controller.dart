@@ -1,6 +1,7 @@
 import 'package:nylo_framework/nylo_framework.dart';
 import '/app/networking/supabase_service.dart';
 import '/app/models/task.dart';
+import '/app/networking/notification_service.dart';
 
 class TaskController extends NyController {
   final SupabaseService _db = SupabaseService();
@@ -87,6 +88,13 @@ class TaskController extends NyController {
     }
     updateState('dashboard');
 
+    // Handle reminders
+    if (nextStatus) {
+      await NotificationService().cancelReminder(task.id!);
+    } else {
+      await NotificationService().scheduleDeadlineReminder(task);
+    }
+
     try {
       await _db.updateTaskStatus(task.id!, nextStatus);
     } catch (e) {
@@ -104,6 +112,9 @@ class TaskController extends NyController {
     }
     updateState('dashboard');
 
+    // Cancel reminder optimistically
+    await NotificationService().cancelReminder(task.id!);
+
     try {
       await _db.deleteTask(task.id!);
       // Refresh cache after deletion
@@ -114,3 +125,4 @@ class TaskController extends NyController {
     }
   }
 }
+

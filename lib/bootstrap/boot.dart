@@ -7,6 +7,7 @@ import 'package:nylo_framework/nylo_framework.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'env.g.dart';
+import '/app/networking/notification_service.dart';
 
 /* Boot
 |--------------------------------------------------------------------------
@@ -52,4 +53,8 @@ Future<void> _init() async {
     url: url,
     anonKey: anonKey,
   );
+
+  // Initialize Local Notifications
+  await NotificationService().init();
 }
+

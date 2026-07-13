@@ -4,6 +4,7 @@ import 'package:nylo_framework/nylo_framework.dart';
 import '/app/controllers/task_controller.dart';
 import '/app/models/task.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '/app/networking/notification_service.dart';
 
 class HomePage extends NyStatefulWidget<TaskController> {
   static RouteView path = ("/home", (_) => HomePage());
@@ -26,6 +27,7 @@ class _HomePageState extends NyPage<HomePage> {
   @override
   get init => () async {
     await widget.controller.loadTasks();
+    await NotificationService().requestAndroidPermissions();
   };
 
   @override
