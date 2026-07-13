@@ -14,7 +14,7 @@ class HomePage extends NyStatefulWidget<TaskController> {
 
 class _HomePageState extends NyPage<HomePage> {
   int _selectedTabIndex = 0; // 0 = KEGIATAN AKTIF, 1 = RIWAYAT
-  int _currentBottomNavIndex = 0; // 0 = TASKS, 1 = HISTORY, 2 = PROFILE
+  int _currentBottomNavIndex = 0; // 0 = TASKS, 1 = PROFILE
 
   // AnimatedList keys — one for active, one for completed
   final GlobalKey<AnimatedListState> _activeListKey = GlobalKey<AnimatedListState>();
@@ -298,7 +298,7 @@ class _HomePageState extends NyPage<HomePage> {
       ),
 
       // Dashboard Body
-      body: _currentBottomNavIndex == 2 
+      body: _currentBottomNavIndex == 1 
           ? _buildProfileView(userName, currentUser?.email)
           : SafeArea(
               child: RefreshIndicator(
@@ -401,11 +401,6 @@ class _HomePageState extends NyPage<HomePage> {
             ),
             _buildBottomNavButton(
               index: 1,
-              icon: Icons.history,
-              label: "HISTORY",
-            ),
-            _buildBottomNavButton(
-              index: 2,
               icon: Icons.person_outline,
               label: "PROFILE",
             ),
@@ -456,9 +451,6 @@ class _HomePageState extends NyPage<HomePage> {
           _currentBottomNavIndex = index;
           if (index == 0) {
             _selectedTabIndex = 0; // Show active tasks
-          } else if (index == 1) {
-            _selectedTabIndex = 1; // Show history tab
-            _currentBottomNavIndex = 0; // Keep the active page on tasks view with riwayat filter
           }
         });
       },
