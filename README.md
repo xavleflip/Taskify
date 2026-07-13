@@ -1,6 +1,6 @@
 # 📑 Taskify: To-Do & Activity Manager
 
-**Taskify** is a modern, pixel-perfect task and activity management mobile application built using **Flutter**. Designed around a high-contrast, bold **Neo-Brutalist** aesthetic, Taskify offers a clean and distraction-free user experience to manage, track, and archive daily routines and responsibilities.
+**Taskify** is a modern, pixel-perfect task and activity management mobile application built using **Flutter**. Taskify offers a clean and distraction-free user experience to manage, track, and archive daily routines and responsibilities.
 
 ---
 
@@ -17,13 +17,11 @@
 
 ## ✨ Key Features
 
-1.  **Neo-Brutalist Styling:** Beautiful flat offset shadows, heavy solid borders (`2.0` - `2.5` width), warm cream backgrounds (`#FFFBF4`), and high-contrast typography.
-2.  **Secure Authentication:** Sign in, register new accounts, or log in with Google OAuth. Protected by route security guards (`AuthRouteGuard` & `GuestRouteGuard`) that secure the internal views.
-3.  **Dynamic Activity List:** Optimistic state updating separating *Active Tasks* and *History (Completed Tasks)* in a clean, checkbox-triggered list view.
-4.  **Desaturated Category Chips:** Visual classification for tasks including **KAMPUS** (blue), **ORGANISASI** (red/pink), **PRIBADI** (green), and **GENERAL** (grey).
-5.  **Calendars & Timers:** Built-in date and time selection dialogs to configure specific, formatted task deadlines.
-6.  **Mark as Important:** A switch toggle on task creation that flags high-priority tasks with a red flag indicator on your dashboard.
-7.  **Offline read fallback:** Prevents connection crash screens by caching your task list locally and displaying a read-only list whenever network errors are caught.
+1.  **Secure Authentication:** Sign in, register new accounts, or log in with Google OAuth. Protected by route security guards (`AuthRouteGuard` & `GuestRouteGuard`) that secure the internal views.
+2.  **Dynamic Activity List:** Optimistic state updating separating *Active Tasks* and *History (Completed Tasks)* in a clean, checkbox-triggered list view.
+3.  **Calendars & Timers:** Built-in date and time selection dialogs to configure specific, formatted task deadlines.
+4.  **Mark as Important:** A switch toggle on task creation that flags high-priority tasks with a red flag indicator on your dashboard.
+5.  **Offline read fallback:** Prevents connection crash screens by caching your task list locally and displaying a read-only list whenever network errors are caught.
 
 ---
 
