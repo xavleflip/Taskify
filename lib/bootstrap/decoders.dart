@@ -1,10 +1,6 @@
-import '/app/controllers/home_controller.dart';
 import '/app/controllers/auth_controller.dart';
 import '/app/controllers/task_controller.dart';
-import '/app/models/user.dart';
 import '/app/models/task.dart';
-import '/app/networking/api_service.dart';
-
 /* Model Decoders
 |--------------------------------------------------------------------------
 | Model decoders are used in 'app/networking/' for morphing json payloads
@@ -15,11 +11,6 @@ import '/app/networking/api_service.dart';
 
 final Map<Type, dynamic> modelDecoders = {
   Map<String, dynamic>: (data) => Map<String, dynamic>.from(data),
-
-  List<User>: (data) =>
-      List.from(data).map((json) => User.fromJson(json)).toList(),
-  //
-  User: (data) => User.fromJson(data),
 
   Task: (data) => Task.fromJson(data),
   List<Task>: (data) =>
@@ -35,8 +26,6 @@ final Map<Type, dynamic> modelDecoders = {
 |-------------------------------------------------------------------------- */
 
 final Map<Type, dynamic> apiDecoders = {
-  ApiService: () => ApiService(),
-
   // ...
 };
 
@@ -47,7 +36,6 @@ final Map<Type, dynamic> apiDecoders = {
 | Learn more https://nylo.dev/docs/7.x/controllers
 |-------------------------------------------------------------------------- */
 final Map<Type, dynamic> controllers = {
-  HomeController: () => HomeController(),
   AuthController: () => AuthController(),
   TaskController: () => TaskController(),
 

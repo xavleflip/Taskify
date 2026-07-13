@@ -5,6 +5,7 @@ import '/app/models/task.dart';
 import '/app/networking/supabase_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '/app/networking/notification_service.dart';
+import '/config/app_colors.dart';
 
 class AddEditTaskPage extends NyStatefulWidget {
   static RouteView path = ("/add-edit-task", (_) => AddEditTaskPage());
@@ -51,44 +52,19 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
     return "${_selectedDeadlineTime!.hour.toString().padLeft(2, '0')}:${_selectedDeadlineTime!.minute.toString().padLeft(2, '0')}";
   }
 
-  // Get color for category circles
-  Color _getCategoryCircleColor(String cat) {
-    switch (cat.toLowerCase()) {
-      case 'kampus':
-        return const Color(0xFF2C5E8A);
-      case 'organisasi':
-        return const Color(0xFF8A3024);
-      case 'pribadi':
-        return const Color(0xFF2C6339);
-      default:
-        return Colors.blueGrey.shade700;
-    }
-  }
-
   // Get color for category backgrounds (when selected)
-  Color _getCategoryBgColor(String cat) {
-    switch (cat.toLowerCase()) {
-      case 'kampus':
-        return const Color(0xFFCEE0F4);
-      case 'organisasi':
-        return const Color(0xFFF9D6D0);
-      case 'pribadi':
-        return const Color(0xFFD3EAD8);
-      default:
-        return const Color(0xFFE5E5E5);
-    }
-  }
+  // Replaced by AppColors
 
   @override
   Widget view(BuildContext context) {
     final isEditMode = _taskToEdit != null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFBF4), // Soft cream canvas background
+      backgroundColor: AppColors.cream, // Soft cream canvas background
       
       // Custom Neo-brutalist App Bar — Phase 9.4: Orange background
       appBar: AppBar(
-        backgroundColor: const Color(0xFF9E3A25), // Terracotta orange
+        backgroundColor: AppColors.terracotta, // Terracotta orange
         elevation: 0,
         centerTitle: true,
         leading: Padding(
@@ -216,7 +192,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
                       hintStyle: GoogleFonts.montserrat(color: Colors.grey[500]),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       filled: true,
-                      fillColor: const Color(0xFFFCF9F2),
+                      fillColor: AppColors.creamDarker,
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.black, width: 2.0),
                         borderRadius: BorderRadius.zero,
@@ -256,7 +232,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: isSelected ? _getCategoryBgColor(cat) : Colors.white,
+                              color: isSelected ? AppColors.getCategoryBgColor(cat) : Colors.white,
                               border: Border.all(color: Colors.black, width: 2),
                               boxShadow: isSelected
                                   ? null
@@ -276,7 +252,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
                                   height: 8,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: _getCategoryCircleColor(cat),
+                                    color: AppColors.getCategoryCircleColor(cat),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -285,7 +261,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
                                   style: GoogleFonts.montserrat(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12,
-                                    color: isSelected ? _getCategoryTextColor(cat) : Colors.black,
+                                    color: isSelected ? AppColors.getCategoryTextColor(cat) : Colors.black,
                                   ),
                                 ),
                               ],
@@ -424,7 +400,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
                       ),
                       Switch(
                         value: _isImportant,
-                        activeColor: const Color(0xFF9E3A25),
+                        activeColor: AppColors.terracotta,
                         activeTrackColor: const Color(0xFFF9D6D0),
                         inactiveThumbColor: Colors.grey.shade700,
                         inactiveTrackColor: Colors.grey.shade300,
@@ -481,7 +457,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
                               onTap: _saveTask,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF9E3A25), // Terracotta
+                                  color: AppColors.terracotta, // Terracotta
                                   border: Border.all(color: Colors.black, width: 2),
                                   boxShadow: const [
                                     BoxShadow(
@@ -549,18 +525,7 @@ class _AddEditTaskPageState extends NyPage<AddEditTaskPage> {
   }
 
   // Get category font color
-  Color _getCategoryTextColor(String cat) {
-    switch (cat.toLowerCase()) {
-      case 'kampus':
-        return const Color(0xFF2C5E8A);
-      case 'organisasi':
-        return const Color(0xFF8A3024);
-      case 'pribadi':
-        return const Color(0xFF2C6339);
-      default:
-        return Colors.black87;
-    }
-  }
+  // Replaced by AppColors
 
   // Save changes to database
   Future<void> _saveTask() async {

@@ -5,6 +5,7 @@ import '/app/controllers/task_controller.dart';
 import '/app/models/task.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '/app/networking/notification_service.dart';
+import '/config/app_colors.dart';
 
 class HomePage extends NyStatefulWidget<TaskController> {
   static RouteView path = ("/home", (_) => HomePage());
@@ -67,31 +68,8 @@ class _HomePageState extends NyPage<HomePage> {
     }
   }
 
-  // Get color for category chip based on category name
-  Color _getCategoryBgColor(String category) {
-    final catLower = category.toLowerCase();
-    if (catLower.contains('kampus') || catLower.contains('school') || catLower.contains('study')) {
-      return const Color(0xFFCEE0F4); // Desaturated soft blue
-    } else if (catLower.contains('organisasi') || catLower.contains('org') || catLower.contains('work')) {
-      return const Color(0xFFF9D6D0); // Desaturated soft pink/orange
-    } else if (catLower.contains('pribadi') || catLower.contains('personal') || catLower.contains('private')) {
-      return const Color(0xFFD3EAD8); // Desaturated soft green
-    }
-    return const Color(0xFFE5E5E5); // Desaturated grey
-  }
-
-  // Get category text color
-  Color _getCategoryTextColor(String category) {
-    final catLower = category.toLowerCase();
-    if (catLower.contains('kampus') || catLower.contains('school') || catLower.contains('study')) {
-      return const Color(0xFF2C5E8A);
-    } else if (catLower.contains('organisasi') || catLower.contains('org') || catLower.contains('work')) {
-      return const Color(0xFF8A3024);
-    } else if (catLower.contains('pribadi') || catLower.contains('personal') || catLower.contains('private')) {
-      return const Color(0xFF2C6339);
-    }
-    return Colors.black87;
-  }
+  // Get color for category text color
+  // Replaced by AppColors
 
   // Phase 9.1: Toggle task with AnimatedList slide-out animation
   Future<void> _toggleTask(Task task) async {
@@ -131,7 +109,7 @@ class _HomePageState extends NyPage<HomePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFFFFFBF4),
+        backgroundColor: AppColors.cream,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
           side: BorderSide(color: Colors.black, width: 2),
@@ -158,7 +136,7 @@ class _HomePageState extends NyPage<HomePage> {
           Container(
             margin: const EdgeInsets.only(right: 8, bottom: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF9E3A25),
+              color: AppColors.terracotta,
               border: Border.all(color: Colors.black, width: 2),
               boxShadow: const [BoxShadow(color: Colors.black, offset: Offset(2, 2))],
             ),
@@ -192,11 +170,11 @@ class _HomePageState extends NyPage<HomePage> {
         : "ABI";
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFBF4), // Warm cream background
+      backgroundColor: AppColors.cream, // Warm cream background
       
       // Phase 9.4: Orange AppBar (Neo-brutalist style)
       appBar: AppBar(
-        backgroundColor: const Color(0xFF9E3A25), // Terracotta orange
+        backgroundColor: AppColors.terracotta, // Terracotta orange
         elevation: 0,
         centerTitle: true,
         leading: Builder(
@@ -255,13 +233,13 @@ class _HomePageState extends NyPage<HomePage> {
       // Left Navigation Drawer
       drawer: Drawer(
         child: Container(
-          color: const Color(0xFFFFFBF4),
+          color: AppColors.cream,
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
                 decoration: const BoxDecoration(
-                  color: Color(0xFF9E3A25),
+                  color: AppColors.terracotta,
                   border: Border(bottom: BorderSide(color: Colors.black, width: 2.5)),
                 ),
                 child: Column(
@@ -373,7 +351,7 @@ class _HomePageState extends NyPage<HomePage> {
       // Phase 9.3: Fixed FAB — Icon directly as child (no Container wrapper)
       floatingActionButton: FloatingActionButton(
         onPressed: () => routeTo('/add-edit-task'),
-        backgroundColor: const Color(0xFF9E3A25), // Terracotta
+        backgroundColor: AppColors.terracotta, // Terracotta
         shape: const RoundedRectangleBorder(
           side: BorderSide(color: Colors.black, width: 2.5),
           borderRadius: BorderRadius.zero,
@@ -388,7 +366,7 @@ class _HomePageState extends NyPage<HomePage> {
           border: Border(
             top: BorderSide(color: Colors.black, width: 2.5),
           ),
-          color: Color(0xFFFCF9F2),
+          color: AppColors.creamDarker,
         ),
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Row(
@@ -519,7 +497,7 @@ class _HomePageState extends NyPage<HomePage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.black, width: 2),
-                  color: const Color(0xFFD3EAD8),
+                  color: AppColors.getCategoryBgColor('pribadi'),
                 ),
                 child: const Icon(Icons.check, color: Colors.black, size: 32),
               ),
@@ -628,7 +606,7 @@ class _HomePageState extends NyPage<HomePage> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: _getCategoryBgColor(task.category),
+                              color: AppColors.getCategoryBgColor(task.category),
                               border: Border.all(color: Colors.black, width: 1.5),
                             ),
                             child: Text(
@@ -636,7 +614,7 @@ class _HomePageState extends NyPage<HomePage> {
                               style: GoogleFonts.montserrat(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
-                                color: _getCategoryTextColor(task.category),
+                                color: AppColors.getCategoryTextColor(task.category),
                               ),
                             ),
                           ),
@@ -675,7 +653,7 @@ class _HomePageState extends NyPage<HomePage> {
                 // Phase 9.5: Three-dot context menu
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert, color: Colors.black54, size: 22),
-                  color: const Color(0xFFFFFBF4),
+                  color: AppColors.cream,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                     side: BorderSide(color: Colors.black, width: 1.5),
@@ -740,7 +718,7 @@ class _HomePageState extends NyPage<HomePage> {
           padding: const EdgeInsets.all(24.0),
           child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFFCF9F2),
+              color: AppColors.creamDarker,
               border: Border.all(color: Colors.black, width: 2.5),
               boxShadow: const [
                 BoxShadow(
@@ -759,7 +737,7 @@ class _HomePageState extends NyPage<HomePage> {
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF9E3A25),
+                    color: AppColors.terracotta,
                     border: Border.all(color: Colors.black, width: 2.5),
                   ),
                   child: Center(
@@ -793,7 +771,7 @@ class _HomePageState extends NyPage<HomePage> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF9E3A25),
+                      color: AppColors.terracotta,
                       border: Border.all(color: Colors.black, width: 2),
                       boxShadow: const [
                         BoxShadow(

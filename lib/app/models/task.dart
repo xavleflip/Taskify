@@ -52,4 +52,29 @@ class Task {
     }
     return data;
   }
+
+  // Create a copy of the task with modified fields
+  Task copyWith({
+    String? id,
+    String? userId,
+    String? title,
+    String? description,
+    String? category,
+    DateTime? deadline,
+    bool? isCompleted,
+    bool? isImportant,
+    DateTime? createdAt,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      deadline: deadline ?? this.deadline,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isImportant: isImportant ?? this.isImportant,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }

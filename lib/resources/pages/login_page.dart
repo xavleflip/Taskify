@@ -369,7 +369,6 @@ class _LoginPageState extends NyPage<LoginPage> {
   }
 
   Future<void> _handleSubmit() async {
-    print("[Login] Submitting form. Form valid: ${_formKey.currentState!.validate()}");
     if (!_formKey.currentState!.validate()) return;
     
     setState(() {
@@ -380,20 +379,17 @@ class _LoginPageState extends NyPage<LoginPage> {
     final password = _passwordController.text;
     bool success = false;
 
-    print("[Login] Calling auth method. Registering: $_isRegistering, Email: $email");
     if (_isRegistering) {
       success = await widget.controller.signUpWithEmail(email, password, context);
     } else {
       success = await widget.controller.loginWithEmail(email, password, context);
     }
 
-    print("[Login] Auth completed. Success: $success, Mounted: $mounted");
     if (mounted) {
       setState(() {
         _isLoading = false;
       });
       if (success) {
-        print("[Login] Redirecting to /home...");
         routeTo('/home', navigationType: NavigationType.pushAndForgetAll);
       }
     }

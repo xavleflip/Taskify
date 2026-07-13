@@ -21,7 +21,6 @@ class TaskController extends NyController {
       // Update local storage cache on success
       await cacheTasksLocally([...activeTasks, ...completedTasks]);
     } catch (e) {
-      print("Database error: $e. Falling back to local cache.");
       // Fallback to cache
       final cachedTasks = await loadCachedTasks();
       activeTasks = cachedTasks.where((t) => !t.isCompleted).toList();
@@ -38,7 +37,7 @@ class TaskController extends NyController {
       final List<Map<String, dynamic>> taskJsonList = tasks.map((t) => t.toJson(includeId: true)).toList();
       await NyStorage.save('cached_tasks', taskJsonList);
     } catch (e) {
-      print("Failed to cache tasks: $e");
+      // Ignore
     }
   }
 
@@ -50,7 +49,7 @@ class TaskController extends NyController {
         return cachedData.map((json) => Task.fromJson(Map<String, dynamic>.from(json))).toList();
       }
     } catch (e) {
-      print("Failed to load cached tasks: $e");
+      // Ignore
     }
     return [];
   }
@@ -61,30 +60,10 @@ class TaskController extends NyController {
     // Optimistic UI updates
     if (task.isCompleted) {
       completedTasks.remove(task);
-      activeTasks.add(Task(
-        id: task.id,
-        userId: task.userId,
-        title: task.title,
-        description: task.description,
-        category: task.category,
-        deadline: task.deadline,
-        isCompleted: false,
-        isImportant: task.isImportant,
-        createdAt: task.createdAt
-      ));
+      activeTasks.add(task.copyWith(isCompleted: false));
     } else {
       activeTasks.remove(task);
-      completedTasks.add(Task(
-        id: task.id,
-        userId: task.userId,
-        title: task.title,
-        description: task.description,
-        category: task.category,
-        deadline: task.deadline,
-        isCompleted: true,
-        isImportant: task.isImportant,
-        createdAt: task.createdAt
-      ));
+      completedTasks.add(task.copyWith(isCompleted: true));
     }
     updateState('dashboard');
 
